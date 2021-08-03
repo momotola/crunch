@@ -127,7 +127,7 @@ static string GetFileName(const string& path)
     return name;
 }
 
-static void LoadBitmap(const string& prefix, const string& path)
+static void LoadBitmap(const string& prefix, const _tinydir_char_t* path)
 {
     if (optVerbose)
         cout << '\t' << PathToStr(path) << endl;
@@ -207,7 +207,20 @@ int main(int argc, const char* argv[])
     
     if (argc < 3)
     {
-        cerr << "invalid input, expected: \"crunch [INPUT DIRECTORY] [OUTPUT PREFIX] [OPTIONS...]\"" << endl;
+        cerr << "invalid input, expected: \"crunch [OUTPUT] [INPUT1,INPUT2,INPUT3...] [OPTIONS...]\"" << endl;
+        cerr << "options:" << endl;
+        cerr << "-d  --default           use default settings (-x -p -t -u)" << endl;
+        cerr << "-x  --xml               saves the atlas data as a .xml file" << endl;
+        cerr << "-b  --binary            saves the atlas data as a .bin file" << endl;
+        cerr << "-j  --json              saves the atlas data as a .json file" << endl;
+        cerr << "-p  --premultiply       premultiplies the pixels of the bitmaps by their alpha channel" << endl;
+        cerr << "-t  --trim              trims excess transparency off the bitmaps" << endl;
+        cerr << "-v  --verbose           print to the debug console as the packer works" << endl;
+        cerr << "-f  --force             ignore the hash, forcing the packer to repack" << endl;
+        cerr << "-u  --unique            remove duplicate bitmaps from the atlas" << endl;
+        cerr << "-r  --rotate            enabled rotating bitmaps 90 degrees clockwise when packing" << endl;
+        cerr << "-s# --size#             max atlas size (# can be 4096, 2048, 1024, 512, or 256)" << endl;
+        cerr << "-p# --pad#              padding between images (# can be from 0 to 16)" << endl;
         return EXIT_FAILURE;
     }
     
@@ -340,7 +353,7 @@ int main(int argc, const char* argv[])
     for (size_t i = 0; i < inputs.size(); ++i)
     {
         if (inputs[i].rfind('.') != string::npos)
-            LoadBitmap("", inputs[i]);
+            LoadBitmap("", StrToPath(inputs[i]).data());
         else
             LoadBitmaps(inputs[i], "");
     }
